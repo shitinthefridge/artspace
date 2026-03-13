@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Global Resets ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0e0c0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #e05c22;
+  border-radius: 4px;
+}
+
+/* ── Button fill-up hover animation ── */
+.btn-fill {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.4s ease;
+}
+.btn-fill::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: #e05c22;
+  z-index: -1;
+  transition: height 0.4s ease;
+}
+.btn-fill:hover::before {
+  height: 100%;
+}
+.btn-fill:hover {
+  color: #f0ead8;
+}
+
+/* ── Card tilt on hover ── */
+.card-tilt {
+  transition: transform 0.3s ease;
+}
+.card-tilt:hover {
+  transform: rotate(-2deg) scale(1.02);
+}
+
+/* ── Fade-up on scroll (used with IntersectionObserver) ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
