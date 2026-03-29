@@ -69,15 +69,9 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Link
                 to="/signup"
-                className="btn-fill border-2 border-burnt text-burnt px-8 py-4 rounded-full font-body font-semibold text-lg text-center"
+                className="btn-primary px-10 py-4 rounded-full font-body font-semibold text-lg text-center"
               >
-                🎨 I'm an Artist
-              </Link>
-              <Link
-                to="/signup"
-                className="btn-fill border-2 border-stone-700 text-cream/70 px-8 py-4 rounded-full font-body font-semibold text-lg text-center"
-              >
-                👁️ I'm a Visitor
+                Get started →
               </Link>
             </div>
           </FadeUp>
