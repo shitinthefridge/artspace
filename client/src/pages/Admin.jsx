@@ -3,22 +3,20 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import PaintSplatter from "../components/PaintSplatter";
 
-const ADMIN_EMAIL    = import.meta.env.VITE_ADMIN_EMAIL    || "kdbryant2403@gmail.com";
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || "Deadpool@123";
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || "";
 
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
   function tryLogin(e) {
     e.preventDefault();
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (input === ADMIN_PASSWORD && ADMIN_PASSWORD !== "") {
       setAuthed(true);
       setError("");
     } else {
-      setError("Incorrect email or password.");
+      setError("Incorrect password.");
     }
   }
 
@@ -31,22 +29,15 @@ export default function Admin() {
           <p className="text-cream/40 font-body text-sm mb-8">For Artspace administrators only.</p>
           <form onSubmit={tryLogin} className="flex flex-col gap-4">
             <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="input-field"
-              placeholder="Admin email"
-              autoFocus
-            />
-            <input
               type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
+              value={input}
+              onChange={e => setInput(e.target.value)}
               className="input-field"
               placeholder="Admin password"
+              autoFocus
             />
             {error && <p className="text-red-400 font-body text-sm">{error}</p>}
-            <button type="submit" className="btn-primary py-3">Sign In</button>
+            <button type="submit" className="btn-primary py-3">Enter</button>
           </form>
         </div>
       </div>
