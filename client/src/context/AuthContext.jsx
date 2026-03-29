@@ -32,13 +32,16 @@ export function AuthProvider({ children }) {
     const email = user.email;
     const baseUsername = email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "") + "_" + Math.floor(Math.random() * 1000);
 
-    await supabase.from("users").insert({
-      id: user.id,
-      email,
-      type,
-      username: baseUsername,
-      approved: type === "buyer",
-      ...locationData,
+    // Use security-definer RPC to bypass RLS timing issue
+    await supabase.rpc("create_user_profile", {
+      p_id: user.id,
+      p_email: email,
+      p_type: type,
+      p_username: baseUsername,
+      p_approved: type === "buyer",
+      p_lat: locationData.lat,
+      p_lng: locationData.lng,
+      p_country: locationData.country,
     });
   }
 
@@ -53,29 +56,34 @@ export function AuthProvider({ children }) {
       async (event, session) => {
         setSession(session);
 
-        if (session) {
-          // Check if user already has a profile
-          const { data: existing } = await supabase
-            .from("users")
-            .select("id, type")
-            .eq("id", session.user.id)
-            .single();
+        try {
+          if (session) {
+            // Check if user already has a profile
+            const { data: existing } = await supabase
+              .from("users")
+              .select("id, type")
+              .eq("id", session.user.id)
+              .single();
 
-          if (!existing) {
-            // New Google user — read type from localStorage
-            const storedType = localStorage.getItem("artspace_signup_type") || "buyer";
-            localStorage.removeItem("artspace_signup_type");
-            await createGoogleProfile(session.user, storedType);
-            // Redirect based on type
-            window.location.href = storedType === "artist" ? "/onboarding" : "/feed";
-            return;
+            if (!existing) {
+              // New Google user — read type from localStorage
+              const storedType = localStorage.getItem("artspace_signup_type") || "buyer";
+              localStorage.removeItem("artspace_signup_type");
+              await createGoogleProfile(session.user, storedType);
+              // Redirect based on type
+              window.location.href = storedType === "artist" ? "/onboarding" : "/feed";
+              return;
+            }
+
+            await fetchProfile(session.user.id);
+          } else {
+            setProfile(null);
           }
-
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
+        } catch {
+          /* silent fail — loading will still resolve */
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
     return () => subscription.unsubscribe();
