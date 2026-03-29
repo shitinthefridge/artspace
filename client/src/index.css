@@ -2,73 +2,293 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Syne:wght@400;500;600;700;800&display=swap');
+
 /* ── Global Resets ── */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { min-height: 100vh; font-family: 'Syne', sans-serif; background: #0e0c0a; color: #f0ead8; }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  min-height: 100vh;
-}
+/* ── Hide default cursor sitewide (Phase 6) ── */
+* { cursor: none !important; }
+@media (pointer: coarse) { * { cursor: auto !important; } } /* re-enable on touch/mobile */
 
 /* ── Custom Scrollbar ── */
-::-webkit-scrollbar {
-  width: 8px;
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0e0c0a; }
+::-webkit-scrollbar-thumb { background: #e05c22; border-radius: 3px; }
+
+/* ── Paintbrush Cursor ── */
+#paintbrush-cursor {
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-4px, -4px);
+  transition: opacity 0.1s;
 }
-::-webkit-scrollbar-track {
-  background: #0e0c0a;
+.cursor-dot {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  animation: dot-fade 0.5s ease-out forwards;
 }
-::-webkit-scrollbar-thumb {
-  background: #e05c22;
-  border-radius: 4px;
+@keyframes dot-fade {
+  0%   { opacity: 0.85; transform: scale(1); }
+  100% { opacity: 0;    transform: scale(0.3); }
 }
 
 /* ── Button fill-up hover animation ── */
 .btn-fill {
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  transition: color 0.4s ease;
+  position: relative; overflow: hidden; z-index: 1;
+  transition: color 0.35s ease;
 }
 .btn-fill::before {
   content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 0%;
+  position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 0%;
   background: #e05c22;
   z-index: -1;
-  transition: height 0.4s ease;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.btn-fill:hover::before {
-  height: 100%;
+.btn-fill:hover::before { height: 100%; }
+.btn-fill:hover { color: #0e0c0a; }
+.btn-fill:active { transform: scale(0.97); }
+
+/* ── Primary solid button ── */
+.btn-primary {
+  @apply bg-burnt text-dark font-body font-semibold px-6 py-3 rounded-full;
+  position: relative; overflow: hidden; z-index: 1;
+  transition: color 0.35s ease, background 0.35s ease;
 }
-.btn-fill:hover {
-  color: #f0ead8;
+.btn-primary::before {
+  content: "";
+  position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 0%;
+  background: #f0ead8;
+  z-index: -1;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.btn-primary:hover::before { height: 100%; }
+.btn-primary:hover { color: #0e0c0a; }
+.btn-primary:active { transform: scale(0.97); }
 
 /* ── Card tilt on hover ── */
 .card-tilt {
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
 }
 .card-tilt:hover {
   transform: rotate(-2deg) scale(1.02);
+  box-shadow: 0 20px 60px rgba(224, 92, 34, 0.15);
 }
 
-/* ── Fade-up on scroll (used with IntersectionObserver) ── */
+/* ── Fade-up on scroll ── */
 .fade-up {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(32px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .fade-up.visible {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ── Paint Splatter Loading ── */
+.paint-splatter {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+.paint-splatter span {
+  position: absolute;
+  border-radius: 50%;
+  animation: splat 1.2s ease-in-out infinite;
+}
+.paint-splatter span:nth-child(1) { width:16px; height:16px; background:#e05c22; top:22px; left:22px; animation-delay:0s; }
+.paint-splatter span:nth-child(2) { width:10px; height:10px; background:#f0ead8; top:0;   left:25px; animation-delay:0.15s; }
+.paint-splatter span:nth-child(3) { width:10px; height:10px; background:#a855f7; top:25px; left:0;   animation-delay:0.3s; }
+.paint-splatter span:nth-child(4) { width:10px; height:10px; background:#e05c22; top:25px; left:50px; animation-delay:0.45s; }
+.paint-splatter span:nth-child(5) { width:10px; height:10px; background:#f0ead8; top:50px; left:25px; animation-delay:0.6s; }
+.paint-splatter span:nth-child(6) { width:8px;  height:8px;  background:#a855f7; top:5px;  left:5px;  animation-delay:0.75s; }
+.paint-splatter span:nth-child(7) { width:8px;  height:8px;  background:#e05c22; top:5px;  left:47px; animation-delay:0.9s; }
+.paint-splatter span:nth-child(8) { width:8px;  height:8px;  background:#f0ead8; top:47px; left:5px;  animation-delay:1.05s; }
+
+@keyframes splat {
+  0%   { transform: scale(0); opacity: 0; }
+  40%  { transform: scale(1.4); opacity: 1; }
+  70%  { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* ── Like splatter burst ── */
+.like-burst {
+  position: absolute;
+  pointer-events: none;
+  animation: burst-out 0.6s ease-out forwards;
+}
+@keyframes burst-out {
+  0%   { opacity: 1; transform: scale(0) rotate(0deg); }
+  60%  { opacity: 0.8; transform: scale(1.8) rotate(20deg); }
+  100% { opacity: 0; transform: scale(2.4) rotate(40deg); }
+}
+
+/* ── Masonry grid ── */
+.masonry-grid {
+  columns: 3;
+  column-gap: 1.25rem;
+}
+.masonry-grid-item {
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+  display: block;
+}
+@media (max-width: 1024px) { .masonry-grid { columns: 2; } }
+@media (max-width: 640px)  { .masonry-grid { columns: 1; } }
+
+/* ── Chip multi-select ── */
+.chip {
+  @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-body border transition-all duration-200;
+  border-color: #3a3530;
+  color: #f0ead8;
+  background: transparent;
+}
+.chip:hover { border-color: #e05c22; color: #e05c22; }
+.chip.selected { background: #e05c22; border-color: #e05c22; color: #0e0c0a; font-weight: 600; }
+
+/* ── Tag input ── */
+.tag {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-body;
+  background: rgba(224, 92, 34, 0.15);
+  border: 1px solid rgba(224, 92, 34, 0.4);
+  color: #e05c22;
+}
+.tag button { opacity: 0.6; font-size: 1rem; line-height: 1; }
+.tag button:hover { opacity: 1; }
+
+/* ── Toggle switch ── */
+.toggle-track {
+  @apply relative inline-block w-12 h-6 rounded-full transition-colors duration-300;
+  background: #3a3530;
+}
+.toggle-track.on { background: #e05c22; }
+.toggle-thumb {
+  @apply absolute top-1 left-1 w-4 h-4 rounded-full bg-cream transition-transform duration-300;
+}
+.toggle-track.on .toggle-thumb { transform: translateX(24px); }
+
+/* ── Card overlay ── */
+.card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(14,12,10,0.85) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+}
+.card-tilt:hover .card-overlay { opacity: 1; }
+
+/* ── Portfolio themes ── */
+.theme-classic {
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --accent: #333333;
+  --heading-font: 'DM Serif Display', serif;
+  --card-bg: #f5f5f5;
+  background: var(--bg);
+  color: var(--text);
+}
+.theme-editorial {
+  --bg: #0e0c0a;
+  --text: #f0ead8;
+  --accent: #e05c22;
+  --heading-font: 'DM Serif Display', serif;
+  --card-bg: #1a1714;
+  background: var(--bg);
+  color: var(--text);
+}
+.theme-warm {
+  --bg: #f5ede0;
+  --text: #3d2b1f;
+  --accent: #c1440e;
+  --heading-font: 'DM Serif Display', serif;
+  --card-bg: #eedfd0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Print styles for portfolio ── */
+@media print {
+  #paintbrush-cursor, nav, .no-print { display: none !important; }
+  * { cursor: auto !important; }
+  body { background: white !important; color: #1a1a1a !important; }
+  .theme-editorial { background: white !important; color: #1a1a1a !important; }
+  .portfolio-grid { page-break-inside: avoid; }
+  .portfolio-artwork { page-break-inside: avoid; break-inside: avoid; }
+}
+
+/* ── Globe section ── */
+#globe-canvas { display: block; }
+
+/* ── Modal ── */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(14, 12, 10, 0.92);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  animation: modal-in 0.2s ease;
+}
+@keyframes modal-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal-content {
+  animation: modal-up 0.3s ease;
+}
+@keyframes modal-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Form inputs ── */
+.input-field {
+  @apply w-full bg-transparent border border-stone-700 rounded-lg px-4 py-3 text-cream font-body text-sm;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.input-field:focus { border-color: #e05c22; }
+.input-field::placeholder { color: rgba(240, 234, 216, 0.4); }
+textarea.input-field { resize: vertical; min-height: 100px; }
+select.input-field { appearance: none; }
+
+/* ── Announcement banner ── */
+.announcement-banner {
+  background: linear-gradient(90deg, #e05c22 0%, #c94a10 100%);
+  color: #0e0c0a;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  position: relative;
+  z-index: 50;
+}
+
+/* ── Responsive nav ── */
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: #1a1714; padding: 1rem; gap: 1rem; z-index: 100; }
+}
+
+/* ── Artist type cards on signup ── */
+.type-card {
+  @apply relative rounded-2xl p-8 border-2 transition-all duration-300 flex flex-col items-center gap-4 text-center;
+  border-color: #3a3530;
+  background: #1a1714;
+}
+.type-card:hover { border-color: #e05c22; transform: translateY(-4px); box-shadow: 0 20px 60px rgba(224, 92, 34, 0.2); }
+.type-card.selected { border-color: #e05c22; background: rgba(224, 92, 34, 0.08); }
