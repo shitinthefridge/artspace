@@ -102,13 +102,15 @@ export function AuthProvider({ children }) {
 
     const baseUsername = email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "") + "_" + Math.floor(Math.random() * 1000);
 
-    const { error: profileError } = await supabase.from("users").insert({
-      id: data.user.id,
-      email,
-      type: userType,
-      username: baseUsername,
-      approved: userType === "buyer",
-      ...locationData,
+    const { error: profileError } = await supabase.rpc("create_user_profile", {
+      p_id: data.user.id,
+      p_email: email,
+      p_type: userType,
+      p_username: baseUsername,
+      p_approved: userType === "buyer",
+      p_lat: locationData.lat,
+      p_lng: locationData.lng,
+      p_country: locationData.country,
     });
     if (profileError) throw profileError;
 
