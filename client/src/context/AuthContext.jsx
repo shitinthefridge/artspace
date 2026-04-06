@@ -46,6 +46,9 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
+    // Safety net: never hang forever if Supabase lock recovery takes too long
+    const timeout = setTimeout(() => setLoading(false), 6000);
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) fetchProfile(session.user.id);
@@ -86,7 +89,10 @@ export function AuthProvider({ children }) {
         }
       }
     );
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   useEffect(() => {
