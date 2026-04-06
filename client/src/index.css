@@ -292,3 +292,70 @@ select.input-field { appearance: none; }
 }
 .type-card:hover { border-color: #e05c22; transform: translateY(-4px); box-shadow: 0 20px 60px rgba(224, 92, 34, 0.2); }
 .type-card.selected { border-color: #e05c22; background: rgba(224, 92, 34, 0.08); }
+
+/* ── Spotlight strip ── */
+.spotlight-strip {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.75rem;
+}
+.spotlight-strip::-webkit-scrollbar { height: 3px; }
+.spotlight-strip::-webkit-scrollbar-track { background: #0e0c0a; }
+.spotlight-strip::-webkit-scrollbar-thumb { background: #e05c22; border-radius: 2px; }
+
+.spotlight-card {
+  flex-shrink: 0;
+  width: 240px;
+  height: 320px;
+  scroll-snap-align: start;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.spotlight-card:hover {
+  transform: translateY(-4px) rotate(1deg);
+  box-shadow: 0 16px 40px rgba(224, 92, 34, 0.2);
+}
+
+/* ── Activity timeline ── */
+.activity-timeline {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.activity-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  width: 2px;
+  background: rgba(224, 92, 34, 0.15);
+  border-radius: 1px;
+}
+.activity-dot {
+  position: absolute;
+  left: -1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e05c22;
+  box-shadow: 0 0 6px rgba(224, 92, 34, 0.5);
+}
+
+/* ── Artist follow card hover reveal ── */
+.artist-card-info {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.artist-follow-card:hover .artist-card-info {
+  opacity: 1;
+  transform: translateY(0);
+}
