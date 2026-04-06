@@ -148,11 +148,15 @@ export function AuthProvider({ children }) {
 
   async function signOut() {
     try {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: "global" });
     } catch { /* ignore */ }
+    // Clear any lingering Supabase tokens so the session can't auto-refresh
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith("sb-")) localStorage.removeItem(key);
+    });
     setProfile(null);
     setSession(null);
-    window.location.href = "/login";
+    window.location.replace("/");
   }
 
   async function refreshProfile() {
