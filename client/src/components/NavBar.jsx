@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function NavBar() {
   const { session, profile, signOut } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -15,7 +14,6 @@ export default function NavBar() {
 
   async function handleSignOut() {
     await signOut();
-    navigate("/");
   }
 
   const isArtist = profile?.type === "artist";
