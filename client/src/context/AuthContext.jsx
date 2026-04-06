@@ -147,9 +147,12 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch { /* ignore */ }
     setProfile(null);
     setSession(null);
+    window.location.href = "/login";
   }
 
   async function refreshProfile() {

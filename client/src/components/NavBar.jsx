@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function NavBar() {
   const { session, profile, signOut } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Don't show nav on landing, login, signup, onboarding, portfolio (public)
@@ -15,7 +14,6 @@ export default function NavBar() {
 
   async function handleSignOut() {
     await signOut();
-    navigate("/login");
   }
 
   const isArtist = profile?.type === "artist";
