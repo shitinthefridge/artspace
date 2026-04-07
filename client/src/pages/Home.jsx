@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
@@ -10,6 +10,42 @@ export default function Home() {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
   const [stats, setStats] = useState({ artists: 0, countries: 0 });
+
+  // Stable config object — only rebuilds when locations change, so the globe
+  // isn't destroyed/recreated on every render (which causes the glitch)
+  const globeConfig = useMemo(() => {
+    const DEFAULT_MARKERS = [
+      { location: [25.2, 55.27],    size: 0.05 }, // Dubai
+      { location: [40.71, -74.01],  size: 0.05 }, // New York
+      { location: [51.5, -0.12],    size: 0.05 }, // London
+      { location: [35.68, 139.69],  size: 0.04 }, // Tokyo
+      { location: [-33.87, 151.21], size: 0.04 }, // Sydney
+      { location: [19.076, 72.877], size: 0.05 }, // Mumbai
+      { location: [48.85, 2.35],    size: 0.04 }, // Paris
+      { location: [-23.55, -46.63], size: 0.04 }, // São Paulo
+    ];
+
+    const markers = locations.length > 0
+      ? locations
+          .filter(l => l.lat != null && l.lng != null)
+          .map(l => ({ location: [l.lat, l.lng], size: l.type === "artist" ? 0.07 : 0.04 }))
+      : DEFAULT_MARKERS;
+
+    return {
+      devicePixelRatio: 2,
+      phi: 0,
+      theta: 0.3,
+      dark: 1,
+      diffuse: 1.2,
+      mapSamples: 16000,
+      mapBrightness: 6,
+      baseColor: [0.1, 0.05, 0],
+      markerColor: [1, 0.4, 0],
+      glowColor: [1, 0.35, 0],
+      onRender: () => {},
+      markers,
+    };
+  }, [locations]);
 
   // If already logged in, go to feed
   useEffect(() => {
@@ -87,7 +123,7 @@ export default function Home() {
         <FadeUp delay={200} className="hidden md:flex flex-col items-center justify-center">
           {/* Relative container defines the globe's size */}
           <div className="relative w-full max-w-[520px] aspect-square">
-            <Globe locations={locations} />
+            <Globe config={globeConfig} />
           </div>
 
           {stats.artists > 0 && (
