@@ -88,8 +88,21 @@ function AdminDashboard() {
 
   async function loadUsers() {
     setLoading(true);
-    const { data, error } = await supabase.rpc("get_all_users_admin");
-    if (!error && data) setUsers(data);
+
+    // Primary: privileged RPC that should return all users
+    const { data: rpcData, error: rpcError } = await supabase.rpc("get_all_users_admin");
+
+    // Fallback: direct query to catch newly-registered users the RPC may miss
+    const { data: directData } = await supabase
+      .from("users")
+      .select("id, email, type, display_name, username, avatar_url, country, approved, created_at");
+
+    const base = rpcError ? [] : (rpcData || []);
+    const extra = directData || [];
+    const seen = new Set(base.map(u => u.id));
+    const merged = [...base, ...extra.filter(u => !seen.has(u.id))];
+
+    setUsers(merged);
     setLoading(false);
   }
 
@@ -195,7 +208,14 @@ function AdminDashboard() {
                         </div>
                       )}
                       <div>
-                        <p className="text-cream font-body font-semibold text-sm">{user.display_name || "—"}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-cream font-body font-semibold text-sm">
+                            {user.display_name || <span className="text-cream/30 italic">Profile not completed yet</span>}
+                          </p>
+                          {!user.display_name && (
+                            <span className="text-xs bg-yellow-900/40 text-yellow-400 border border-yellow-800 px-1.5 py-0.5 rounded-full font-body">New signup</span>
+                          )}
+                        </div>
                         <p className="text-cream/40 font-body text-xs">{user.email}</p>
                         {user.country && <p className="text-cream/30 font-body text-xs">{user.country}</p>}
                       </div>

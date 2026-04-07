@@ -16,6 +16,7 @@ export default function Onboarding() {
   const [topics, setTopics] = useState([]);
   const [topicInput, setTopicInput] = useState("");
   const [trainingYear, setTrainingYear] = useState("");
+  const [city, setCity] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -70,7 +71,7 @@ export default function Onboarding() {
         .slice(0, 30) + "_" + Math.floor(Math.random() * 100);
 
       // Update user profile
-      const { error: updateErr } = await supabase.from("users").update({
+      const updatePayload = {
         display_name: displayName.trim(),
         about_me: aboutMe.trim(),
         mediums,
@@ -79,7 +80,10 @@ export default function Onboarding() {
         training_start_year: trainingYear ? parseInt(trainingYear) : null,
         avatar_url: avatarUrl,
         username,
-      }).eq("id", session.user.id);
+      };
+      if (city.trim()) updatePayload.country = city.trim();
+
+      const { error: updateErr } = await supabase.from("users").update(updatePayload).eq("id", session.user.id);
 
       if (updateErr) throw updateErr;
 
@@ -223,6 +227,21 @@ export default function Onboarding() {
               className="input-field"
               placeholder="e.g. dreams, nature, identity…"
             />
+          </section>
+
+          {/* Location */}
+          <section>
+            <label className="text-cream/60 font-body text-xs uppercase tracking-widest mb-2 block">
+              Where are you from?
+            </label>
+            <input
+              value={city}
+              onChange={e => setCity(e.target.value)}
+              className="input-field"
+              placeholder="e.g. Mumbai, India"
+              maxLength={80}
+            />
+            <p className="text-cream/20 font-body text-xs mt-1">This appears on your profile and the globe on our homepage.</p>
           </section>
 
           {/* Training year */}

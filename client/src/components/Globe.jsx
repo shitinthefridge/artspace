@@ -33,13 +33,13 @@ export default function Globe({ locations = [] }) {
       height: widthRef.current * 2,
       phi: 0,
       theta: 0.3,
-      dark: 1,
+      dark: 0,
       diffuse: 0.4,
       mapSamples: 16000,
       mapBrightness: 1.2,
-      baseColor: [0.11, 0.08, 0.05],
+      baseColor: [1, 1, 1],
       markerColor: [0.878, 0.361, 0.133],   // burnt orange #e05c22
-      glowColor: [0.94, 0.92, 0.85],         // cream #f0ead8
+      glowColor: [1, 1, 1],
       markers,
       onRender(state) {
         if (!pointerInteracting.current) phiRef.current += 0.004;
