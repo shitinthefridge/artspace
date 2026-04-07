@@ -83,43 +83,19 @@ export default function Home() {
           </FadeUp>
         </div>
 
-        {/* Right — Globe */}
-        <FadeUp delay={200} className="hidden md:flex items-center justify-center">
-          <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-stone-800/60 bg-dark/40 px-10 pt-8 pb-32 w-full max-w-lg">
-            {/* Label */}
-            <span
-              className="pointer-events-none font-heading text-7xl font-semibold text-center whitespace-pre-wrap leading-none z-10"
-              style={{
-                background: "linear-gradient(to bottom, #f0ead8, rgba(240,234,216,0.2))",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              Artspace
-            </span>
-
-            {/* Globe */}
-            <div className="absolute bottom-[-80px] w-full">
-              <Globe locations={locations} />
-            </div>
-
-            {/* Bottom radial overlay */}
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background: "radial-gradient(circle at 50% 180%, rgba(14,12,10,0.5), transparent 60%)",
-              }}
-            />
-
-            {/* Counter */}
-            {stats.artists > 0 && (
-              <p className="relative z-10 mt-4 text-cream/40 font-body text-sm">
-                <span className="text-burnt font-semibold">{stats.artists}</span> artists across{" "}
-                <span className="text-cream/70 font-semibold">{stats.countries}</span> countries
-              </p>
-            )}
+        {/* Right — Globe (floats freely, no box) */}
+        <FadeUp delay={200} className="hidden md:flex flex-col items-center justify-center">
+          {/* Relative container defines the globe's size */}
+          <div className="relative w-full max-w-[520px] aspect-square">
+            <Globe locations={locations} />
           </div>
+
+          {stats.artists > 0 && (
+            <p className="text-cream/40 font-body text-sm mt-2">
+              <span className="text-burnt font-semibold">{stats.artists}</span> artists across{" "}
+              <span className="text-cream/70 font-semibold">{stats.countries}</span> countries
+            </p>
+          )}
         </FadeUp>
       </main>
 
