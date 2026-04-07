@@ -4,7 +4,7 @@ import { useMotionValue, useSpring } from "motion/react";
 
 const MOVEMENT_DAMPING = 1400;
 
-export default function Globe({ locations = [] }) {
+export default function Globe({ className = "", config = {} }) {
   const canvasRef = useRef(null);
   const phiRef = useRef(0);
   const widthRef = useRef(0);
@@ -12,11 +12,7 @@ export default function Globe({ locations = [] }) {
   const pointerInteractionMovement = useRef(0);
 
   const r = useMotionValue(0);
-  const rs = useSpring(r, {
-    mass: 1,
-    damping: 30,
-    stiffness: 100,
-  });
+  const rs = useSpring(r, { mass: 1, damping: 30, stiffness: 100 });
 
   const updatePointerInteraction = (value) => {
     pointerInteracting.current = value;
@@ -42,41 +38,10 @@ export default function Globe({ locations = [] }) {
     window.addEventListener("resize", onResize);
     onResize();
 
-    // Build markers from real user locations, fall back to defaults if empty
-    const dbMarkers = locations
-      .filter(l => l.lat != null && l.lng != null)
-      .map(l => ({
-        location: [l.lat, l.lng],
-        size: l.type === "artist" ? 0.07 : 0.04,
-      }));
-
-    const markers = dbMarkers.length > 0 ? dbMarkers : [
-      { location: [14.5995, 120.9842], size: 0.03 },
-      { location: [19.076, 72.8777], size: 0.1 },
-      { location: [23.8103, 90.4125], size: 0.05 },
-      { location: [30.0444, 31.2357], size: 0.07 },
-      { location: [39.9042, 116.4074], size: 0.08 },
-      { location: [-23.5505, -46.6333], size: 0.1 },
-      { location: [19.4326, -99.1332], size: 0.1 },
-      { location: [40.7128, -74.006], size: 0.1 },
-      { location: [34.6937, 135.5022], size: 0.05 },
-      { location: [41.0082, 28.9784], size: 0.06 },
-    ];
-
     const globe = createGlobe(canvasRef.current, {
-      devicePixelRatio: 2,
+      ...config,
       width: widthRef.current * 2,
       height: widthRef.current * 2,
-      phi: 0,
-      theta: 0.3,
-      dark: 1,
-      diffuse: 0.4,
-      mapSamples: 16000,
-      mapBrightness: 1.2,
-      baseColor: [0.25, 0.2, 0.16],       // dark warm brown — land masses
-      markerColor: [251 / 255, 100 / 255, 21 / 255], // burnt orange #e05c22
-      glowColor: [0.878, 0.361, 0.133],   // orange outer glow
-      markers,
       onRender: (state) => {
         if (!pointerInteracting.current) phiRef.current += 0.005;
         state.phi = phiRef.current + rs.get();
@@ -93,10 +58,10 @@ export default function Globe({ locations = [] }) {
       globe.destroy();
       window.removeEventListener("resize", onResize);
     };
-  }, [rs, locations]);
+  }, [rs, config]);
 
   return (
-    <div className="absolute inset-0 mx-auto aspect-square w-full">
+    <div className={`absolute inset-0 mx-auto aspect-square w-full ${className}`}>
       <canvas
         ref={canvasRef}
         className="size-full opacity-0 transition-opacity duration-500"
